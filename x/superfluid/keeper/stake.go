@@ -581,39 +581,45 @@ func (k Keeper) IterateDelegations(context context.Context, delegator sdk.AccAdd
 		// get locked coin from the lock ID
 		interim, ok := k.GetIntermediaryAccountFromLockId(ctx, lock.UnderlyingLockId)
 		if !ok {
-			return fmt.Errorf("intermediary account not found for lock id %d", lock.UnderlyingLockId)
+			continue
+			//return fmt.Errorf("intermediary account not found for lock id %d", lock.UnderlyingLockId)
 		}
 
 		lock, err := k.lk.GetLockByID(ctx, lock.UnderlyingLockId)
 		if err != nil {
-			ctx.Logger().Error("lockup retrieval failed with underlying lock", "Lock", lock, "Error", err)
-			return err
+			continue
+			//ctx.Logger().Error("lockup retrieval failed with underlying lock", "Lock", lock, "Error", err)
+			//return err
 		}
 
 		coin, err := lock.SingleCoin()
 		if err != nil {
-			ctx.Logger().Error("lock fails to meet expected invariant, it contains multiple coins", "Lock", lock, "Error", err)
-			return err
+			continue
+			//ctx.Logger().Error("lock fails to meet expected invariant, it contains multiple coins", "Lock", lock, "Error", err)
+			//return err
 		}
 
 		// get osmo-equivalent token amount
 		amount, err := k.GetSuperfluidOSMOTokens(ctx, interim.Denom, coin.Amount)
 		if err != nil {
-			ctx.Logger().Error("failed to get osmo equivalent of token", "Denom", interim.Denom, "Amount", coin.Amount, "Error", err)
-			return err
+			continue
+			//ctx.Logger().Error("failed to get osmo equivalent of token", "Denom", interim.Denom, "Amount", coin.Amount, "Error", err)
+			//return err
 		}
 
 		// get validator shares equivalent to the token amount
 		valAddr, err := sdk.ValAddressFromBech32(interim.ValAddr)
 		if err != nil {
-			ctx.Logger().Error("failed to decode validator address", "Intermediary", interim.ValAddr, "LockID", lock.ID, "Error", err)
-			return err
+			continue
+			//ctx.Logger().Error("failed to decode validator address", "Intermediary", interim.ValAddr, "LockID", lock.ID, "Error", err)
+			//return err
 		}
 
 		validator, err := k.sk.GetValidator(ctx, valAddr)
 		if err != nil {
-			ctx.Logger().Error("validator does not exist for lock", "Validator", valAddr, "LockID", lock.ID)
-			return err
+			continue
+			//ctx.Logger().Error("validator does not exist for lock", "Validator", valAddr, "LockID", lock.ID)
+			//return err
 		}
 
 		shares, err := validator.SharesFromTokens(amount)
