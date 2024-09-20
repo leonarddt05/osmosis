@@ -5,6 +5,7 @@ import "cosmos/msg/v1/msg.proto";
 import "gogoproto/gogo.proto";
 import "amino/amino.proto";
 import "cosmos/base/v1beta1/coin.proto";
+import "cosmos_proto/cosmos.proto";
 
 option go_package = "github.com/osmosis-labs/osmosis/v26/x/concentrated-liquidity/types";
 
@@ -18,6 +19,7 @@ service Msg {
   // charging, this function deletes the old position and creates a new one with
   // the resulting amount after addition.
   rpc AddToPosition(MsgAddToPosition) returns (MsgAddToPositionResponse);
+  
   rpc CollectSpreadRewards(MsgCollectSpreadRewards)
       returns (MsgCollectSpreadRewardsResponse);
   rpc CollectIncentives(MsgCollectIncentives)
@@ -154,7 +156,7 @@ message MsgWithdrawPosition {
   uint64 position_id = 1 [ (gogoproto.moretags) = "yaml:\"position_id\"" ];
   string sender = 2 [ (gogoproto.moretags) = "yaml:\"sender\"" ];
   string liquidity_amount = 3 [
-
+    (cosmos_proto.scalar)  = "cosmos.Dec",
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.moretags) = "yaml:\"liquidity_amount\"",
     (gogoproto.nullable) = false
